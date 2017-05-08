@@ -8,47 +8,53 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace proyControlInv
+namespace proySerpientesEscaleras
 {
     public partial class Form1 : Form
     {
-        Inventario inventario;
-        Producto producto;
+        Tablero T;
+        Jugador J1;
+        Jugador J2;
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void btnAgregar_Click(object sender, EventArgs e)
+        private void btnJugar_Click(object sender, EventArgs e)
         {
-            int codigo = Convert.ToInt32(txtCodigo.Text);
-            string nombre = txtNombre.Text;
-            int cantidad = Convert.ToInt32(txtCantidad.Text);
-            int costo = Convert.ToInt32(txtCosto.Text);
+            T = new Tablero();
+            J1 = new Jugador(txtJugador1.Text);
+            J2 = new Jugador(txtJugador2.Text);
+            string ganador = "";
+            int dado = 0;
+            
 
-            producto = new Producto(codigo, nombre, cantidad, costo);
-            inventario.agregar(producto);
-        }
+            while (J1.pos < 100 && J2.pos < 100)
+            {
+                dado = J1.lanzar();
+                if (J1.pos + dado < 100)
+                {
+                    J1.avanzar(T.validar(J1.pos + dado));
+                }
+                else
+                {
+                    ganador = J1.nombre;
+                    break;
+                }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            inventario = new Inventario();
-        }
+                dado = J2.lanzar();
+                if (J2.pos + dado < 100)
+                {
+                    J2.avanzar(T.validar(J2.pos + dado));
+                }
+                else
+                {
+                    ganador = J2.nombre;
+                    break;
+                }
+            }
 
-        private void btnBuscar_Click(object sender, EventArgs e)
-        {
-            producto = inventario.buscar(txtNombre.Text);
-            txtReporte.Text = producto.ToString();
-        }
-
-        private void btnEliminar_Click(object sender, EventArgs e)
-        {
-            inventario.eliminar(txtNombre.Text);
-        }
-
-        private void btnReporte_Click(object sender, EventArgs e)
-        {
-            txtReporte.Text = inventario.reporte();
+            txtGanador.Text = ganador;
         }
     }
 }
